@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Zap } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
-import { StepBusiness } from './StepBusiness'
+import { StepBusiness, type BusinessData } from './StepBusiness'
 import { StepChannels } from './StepChannels'
 import { StepActivation } from './StepActivation'
 import type { VerticalType } from '@/types/database'
@@ -37,10 +37,15 @@ export function OnboardingShell() {
   const [direction, setDirection] = useState(1)
   const [activating, setActivating] = useState(false)
 
-  const [businessData, setBusinessData] = useState({
+  const [businessData, setBusinessData] = useState<BusinessData>({
     url: '',
     vertical: null as VerticalType | null,
     businessName: '',
+    personName: '',
+    profileUrl: '',
+    instagramUrl: '',
+    socialUrl: '',
+    siteMode: 'full',
   })
   const [channelData, setChannelData] = useState({
     whatsapp: false,
@@ -97,6 +102,7 @@ export function OnboardingShell() {
           vertical: businessData.vertical || 'autre',
           website_url: businessData.url,
           bot_active: true,
+          bot_instructions: businessData.generatedInstructions || null,
         })
         .select()
         .single()
