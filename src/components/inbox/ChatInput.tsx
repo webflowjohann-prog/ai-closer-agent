@@ -1,19 +1,25 @@
 import { useState } from 'react'
-import { Send, Paperclip, Bot, User as UserIcon } from 'lucide-react'
+import { Send, Paperclip, Bot, User as UserIcon, Euro, Video } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
+import { SendPaymentDialog } from './SendPaymentDialog'
+import { VideoAIDialog } from './VideoAIDialog'
 import { cn } from '@/lib/utils'
+import type { Conversation } from '@/types/database'
 
 interface ChatInputProps {
   onSend: (text: string) => void
   onToggleBot: (active: boolean) => void
   botActive: boolean
   disabled?: boolean
+  conversation?: Conversation | null
 }
 
-export function ChatInput({ onSend, onToggleBot, botActive, disabled }: ChatInputProps) {
+export function ChatInput({ onSend, onToggleBot, botActive, disabled, conversation }: ChatInputProps) {
   const [input, setInput] = useState('')
+  const [showPayment, setShowPayment] = useState(false)
+  const [showVideo, setShowVideo] = useState(false)
 
   const handleSend = () => {
     if (!input.trim()) return
@@ -26,6 +32,14 @@ export function ChatInput({ onSend, onToggleBot, botActive, disabled }: ChatInpu
       e.preventDefault()
       handleSend()
     }
+  }
+
+  const handlePaymentSend = (url: string, title: string, amount: number) => {
+    onSend(`💳 Lien de paiement : ${title} — ${amount.toLocaleString('fr-FR')} € → ${url}`)
+  }
+
+  const handleVideoSend = (script: string) => {
+    onSend(`🎬 Message vidéo personnalisé : ${script.slice(0, 80)}...`)
   }
 
   return (
@@ -54,6 +68,31 @@ export function ChatInput({ onSend, onToggleBot, botActive, disabled }: ChatInpu
         <Button variant="ghost" size="icon" className="flex-shrink-0 h-9 w-9" disabled={disabled}>
           <Paperclip className="w-4 h-4" />
         </Button>
+
+        {/* Payment button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="flex-shrink-0 h-9 w-9 text-green-600 hover:bg-green-50"
+          disabled={disabled || botActive}
+          onClick={() => setShowPayment(true)}
+          title="Demande de paiement"
+        >
+          <Euro className="w-4 h-4" />
+        </Button>
+
+        {/* Video AI button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="flex-shrink-0 h-9 w-9 text-purple-500 hover:bg-purple-50"
+          disabled={disabled || botActive}
+          onClick={() => setShowVideo(true)}
+          title="Vidéo IA personnalisée"
+        >
+          <Video className="w-4 h-4" />
+        </Button>
+
         <Textarea
           placeholder="Répondre..."
           value={input}
@@ -81,6 +120,20 @@ export function ChatInput({ onSend, onToggleBot, botActive, disabled }: ChatInpu
           L'agent IA répond automatiquement. Désactivez-le pour prendre la main.
         </p>
       )}
+
+      {/* Dialogs */}
+      <SendPaymentDialog
+        open={showPayment}
+        onClose={() => setShowPayment(false)}
+        conversation={conversation || null}
+        onSendToChat={handlePaymentSend}
+      />
+      <VideoAIDialog
+        open={showVideo}
+        onClose={() => setShowVideo(false)}
+        onSendToChat={handleVideoSend}
+        contactName={conversation?.contact?.full_name}
+      />
     </div>
   )
 }

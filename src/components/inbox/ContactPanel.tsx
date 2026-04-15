@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { LeadScoreIndicator } from '@/components/contacts/LeadScoreIndicator'
+import { ReviewRequestButton } from '@/components/contacts/ReviewRequestButton'
 import { formatDate, getInitials } from '@/lib/utils'
 import type { Conversation } from '@/types/database'
 
@@ -61,18 +63,11 @@ export function ContactPanel({ conversation, onHumanTakeover }: ContactPanelProp
             {statusLabel[contact.status] || contact.status}
           </Badge>
         </div>
+
+        {/* Lead score */}
         {contact.score > 0 && (
-          <div className="mt-2">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-[var(--text-tertiary)]">Score</span>
-              <span className="font-medium text-[var(--text-primary)]">{contact.score}/100</span>
-            </div>
-            <div className="h-1.5 bg-[var(--color-gray-200)] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-brand-500 rounded-full transition-all"
-                style={{ width: `${contact.score}%` }}
-              />
-            </div>
+          <div className="mt-3 flex justify-center">
+            <LeadScoreIndicator score={contact.score} size="sm" showLabel={true} />
           </div>
         )}
       </div>
@@ -169,6 +164,15 @@ export function ContactPanel({ conversation, onHumanTakeover }: ContactPanelProp
             Prendre la main
           </Button>
         )}
+
+        {/* Review request button — only when won */}
+        {contact.status === 'closed_won' && (
+          <ReviewRequestButton
+            contactId={contact.id}
+            conversationId={conversation.id}
+          />
+        )}
+
         <Button variant="ghost" size="sm" className="w-full" asChild>
           <a href={`/app/contacts`}>
             <ExternalLink className="w-3.5 h-3.5" />

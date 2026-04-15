@@ -2,6 +2,7 @@ import { useEffect, lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
 import { AppShell } from '@/components/layout/AppShell'
+import { ClientPortalShell } from '@/components/layout/ClientPortalShell'
 import { useAuthInit } from '@/hooks/useAuth'
 import { useAuthStore } from '@/stores/authStore'
 import { useUIStore } from '@/stores/uiStore'
@@ -23,6 +24,12 @@ const DealsPage = lazy(() => import('@/pages/DealsPage'))
 const CampaignsPage = lazy(() => import('@/pages/CampaignsPage'))
 const CampaignDetailPage = lazy(() => import('@/pages/CampaignDetailPage'))
 const TemplatesPage = lazy(() => import('@/pages/TemplatesPage'))
+const GrowthPage = lazy(() => import('@/pages/GrowthPage'))
+
+// Portal
+const PortalDashboard = lazy(() => import('@/pages/portal/PortalDashboard'))
+const PortalConversations = lazy(() => import('@/pages/portal/PortalConversations'))
+const PortalBookings = lazy(() => import('@/pages/portal/PortalBookings'))
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading, initialized } = useAuthStore()
@@ -97,6 +104,14 @@ export default function App() {
               <Route path="campaigns" element={<CampaignsPage />} />
               <Route path="campaigns/:id" element={<CampaignDetailPage />} />
               <Route path="templates" element={<TemplatesPage />} />
+              <Route path="growth" element={<GrowthPage />} />
+            </Route>
+
+            {/* Portal routes (simplified view for clients) */}
+            <Route path="/portal" element={<AuthGuard><ClientPortalShell /></AuthGuard>}>
+              <Route index element={<PortalDashboard />} />
+              <Route path="conversations" element={<PortalConversations />} />
+              <Route path="bookings" element={<PortalBookings />} />
             </Route>
 
             {/* Default redirect */}

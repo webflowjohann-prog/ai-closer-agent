@@ -1,6 +1,7 @@
 import { Bot, User as UserIcon, CheckCheck } from 'lucide-react'
 import { formatDateTime, cn } from '@/lib/utils'
 import type { Message } from '@/types/database'
+import { VoiceNoteBubble } from './VoiceNoteBubble'
 
 interface MessageBubbleProps {
   message: Message
@@ -9,6 +10,7 @@ interface MessageBubbleProps {
 export function MessageBubble({ message }: MessageBubbleProps) {
   const isOutbound = message.direction === 'outbound'
   const isBot = message.sender_type === 'bot'
+  const isAudio = message.content_type === 'audio'
 
   return (
     <div className={cn('flex items-end gap-2 group', isOutbound ? 'flex-row-reverse' : '')}>
@@ -25,21 +27,26 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       </div>
 
       <div className={cn('max-w-[72%] space-y-1', isOutbound ? 'items-end' : 'items-start')}>
-        {/* Bubble */}
-        <div
-          className={cn(
-            'px-3 py-2 rounded-2xl text-sm leading-relaxed',
-            isOutbound
-              ? isBot
-                ? 'bg-brand-500 text-white rounded-br-sm'
-                : 'bg-[var(--color-gray-700)] text-white rounded-br-sm'
-              : 'bg-[var(--surface-primary)] text-[var(--text-primary)] rounded-bl-sm border border-[var(--border-default)]'
-          )}
-        >
-          {message.content || (
-            <span className="italic opacity-60">Message média</span>
-          )}
-        </div>
+        {/* Voice note bubble */}
+        {isAudio && message.media_url ? (
+          <VoiceNoteBubble mediaUrl={message.media_url} isOutbound={isOutbound} />
+        ) : (
+          /* Text bubble */
+          <div
+            className={cn(
+              'px-3 py-2 rounded-2xl text-sm leading-relaxed',
+              isOutbound
+                ? isBot
+                  ? 'bg-brand-500 text-white rounded-br-sm'
+                  : 'bg-[var(--color-gray-700)] text-white rounded-br-sm'
+                : 'bg-[var(--surface-primary)] text-[var(--text-primary)] rounded-bl-sm border border-[var(--border-default)]'
+            )}
+          >
+            {message.content || (
+              <span className="italic opacity-60">Message média</span>
+            )}
+          </div>
+        )}
 
         {/* Meta */}
         <div className={cn(

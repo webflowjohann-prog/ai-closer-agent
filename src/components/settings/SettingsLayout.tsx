@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { Building2, MessageSquare, Bot, Key, Users, CreditCard, Palette, Code2 } from 'lucide-react'
+import {
+  Building2, MessageSquare, Bot, Key, Users, CreditCard,
+  Palette, Code2, BarChart3, Star, CreditCard as StripeIcon,
+  GitBranch, Video,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ProfileSettings } from './ProfileSettings'
 import { ChannelSettings } from './ChannelSettings'
@@ -9,6 +13,11 @@ import { WhiteLabelSettings } from './WhiteLabelSettings'
 import { ApiAccessSettings } from './ApiAccessSettings'
 import { BotScheduleSettings } from './BotScheduleSettings'
 import { OptimizeBot } from './OptimizeBot'
+import { ReportSettings } from './ReportSettings'
+import { ReviewSettings } from './ReviewSettings'
+import { StripeSettings } from './StripeSettings'
+import { RoutingRules } from './RoutingRules'
+import { VideoAISettings } from './VideoAISettings'
 import { Separator } from '@/components/ui/separator'
 
 const sections = [
@@ -18,6 +27,11 @@ const sections = [
   { id: 'apikey', label: 'Clé API (BYOK)', icon: Key },
   { id: 'whitelabel', label: 'White-Label', icon: Palette },
   { id: 'api', label: 'API & Webhooks', icon: Code2 },
+  { id: 'reports', label: 'Rapports', icon: BarChart3 },
+  { id: 'reviews', label: 'Avis clients', icon: Star },
+  { id: 'payments', label: 'Paiements', icon: StripeIcon },
+  { id: 'routing', label: 'Routing', icon: GitBranch },
+  { id: 'video', label: 'Vidéo IA', icon: Video },
   { id: 'team', label: 'Équipe', icon: Users },
   { id: 'billing', label: 'Facturation', icon: CreditCard },
 ]
@@ -28,7 +42,7 @@ export function SettingsLayout() {
   return (
     <div className="flex h-full gap-0">
       {/* Sidebar nav */}
-      <div className="w-52 flex-shrink-0 border-r border-[var(--border-default)] bg-[var(--surface-primary)] p-3">
+      <div className="w-52 flex-shrink-0 border-r border-[var(--border-default)] bg-[var(--surface-primary)] p-3 overflow-y-auto">
         <nav className="space-y-0.5">
           {sections.map((s) => (
             <button
@@ -64,6 +78,11 @@ export function SettingsLayout() {
         {active === 'apikey' && <ApiKeySettings />}
         {active === 'whitelabel' && <WhiteLabelSettings />}
         {active === 'api' && <ApiAccessSettings />}
+        {active === 'reports' && <ReportSettings />}
+        {active === 'reviews' && <ReviewSettings />}
+        {active === 'payments' && <StripeSettings />}
+        {active === 'routing' && <RoutingRules />}
+        {active === 'video' && <VideoAISettings />}
         {active === 'team' && (
           <div className="text-center py-12 text-[var(--text-tertiary)]">
             <Users className="w-8 h-8 mx-auto mb-3" />

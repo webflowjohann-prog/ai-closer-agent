@@ -438,3 +438,148 @@ export interface BotSchedule {
   created_at: string
   updated_at: string
 }
+
+// === SPRINT 4-5-6 TYPES ===
+
+export interface CommentTrigger {
+  id: string
+  sub_account_id: string
+  platform: 'instagram' | 'facebook'
+  post_id?: string
+  post_url?: string
+  trigger_keyword?: string
+  dm_template: string
+  is_active: boolean
+  triggers_count: number
+  dms_sent: number
+  created_at: string
+  updated_at: string
+}
+
+export interface PaymentLink {
+  id: string
+  sub_account_id: string
+  contact_id?: string
+  conversation_id?: string
+  title: string
+  amount: number
+  currency: string
+  stripe_payment_link_id?: string
+  stripe_payment_link_url?: string
+  status: 'pending' | 'paid' | 'expired' | 'cancelled'
+  paid_at?: string
+  created_at: string
+  updated_at: string
+  contact?: Contact
+}
+
+export interface ReportSchedule {
+  id: string
+  sub_account_id: string
+  frequency: 'daily' | 'weekly' | 'monthly'
+  day_of_week: number
+  send_to: string[]
+  include_sections: string[]
+  is_active: boolean
+  last_sent_at?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface ReviewRequest {
+  id: string
+  sub_account_id: string
+  contact_id: string
+  conversation_id?: string
+  platform: 'google' | 'trustpilot' | 'facebook'
+  review_url: string
+  status: 'pending' | 'sent' | 'clicked' | 'reviewed'
+  sent_at?: string
+  clicked_at?: string
+  created_at: string
+  contact?: Contact
+}
+
+export interface ConversationInsight {
+  id: string
+  sub_account_id: string
+  period_start: string
+  period_end: string
+  top_questions: Array<{ question: string; count: number }>
+  top_objections: Array<{ objection: string; count: number }>
+  best_scripts: Array<{ script: string; conversion_rate: number }>
+  avg_response_time_seconds: number
+  avg_messages_to_qualify: number
+  avg_messages_to_book: number
+  busiest_hours: Array<{ hour: number; count: number }>
+  best_converting_hours: Array<{ hour: number; rate: number }>
+  language_distribution: Record<string, number>
+  sentiment_distribution: Record<string, number>
+  created_at: string
+}
+
+export interface RoutingRule {
+  id: string
+  sub_account_id: string
+  name: string
+  conditions: {
+    field: string
+    operator: 'equals' | 'contains' | 'greater_than' | 'less_than'
+    value: string
+  }[]
+  assign_to_user_id: string
+  priority: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface QRCode {
+  id: string
+  sub_account_id: string
+  name: string
+  channel_type: ChannelType
+  target_url: string
+  welcome_message?: string
+  campaign_id?: string
+  scans_count: number
+  conversations_started: number
+  qr_image_url?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface FormConnection {
+  id: string
+  sub_account_id: string
+  name: string
+  source: 'webhook' | 'meta_lead_ads' | 'google_ads' | 'typeform' | 'custom'
+  webhook_url?: string
+  webhook_secret?: string
+  response_channel: ChannelType
+  response_template: string
+  response_delay_seconds: number
+  leads_received: number
+  leads_contacted: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface DealWithAttribution extends Deal {
+  first_conversation_id?: string
+  first_message_at?: string
+  bot_initiated: boolean
+  bot_messages_before_human: number
+  attribution_channel?: ChannelType
+  commission_amount?: number
+}
+
+export interface ContactWithBehavior extends Contact {
+  behavior_score: number
+  avg_response_time_seconds?: number
+  avg_message_length?: number
+  engagement_level: 'low' | 'medium' | 'high' | 'very_high'
+  detected_language: string
+  sentiment: 'positive' | 'neutral' | 'negative'
+}
