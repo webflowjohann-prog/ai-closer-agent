@@ -10,6 +10,7 @@ import { ActivityChart } from '@/components/dashboard/ActivityChart'
 import { ROIDashboard } from '@/components/dashboard/ROIDashboard'
 import { InsightsDashboard } from '@/components/dashboard/InsightsDashboard'
 import { ReviewStats } from '@/components/dashboard/ReviewStats'
+import { TrackedLinksWidget } from '@/components/dashboard/TrackedLinksWidget'
 import { useDashboardStats, useActivityData } from '@/hooks/useDashboardStats'
 import { useConversations } from '@/hooks/useConversations'
 import { ConversationItem } from '@/components/inbox/ConversationItem'
@@ -49,6 +50,7 @@ export default function DashboardPage() {
             <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
             <TabsTrigger value="roi">ROI</TabsTrigger>
             <TabsTrigger value="intelligence">Intelligence</TabsTrigger>
+            <TabsTrigger value="links">Liens trackés</TabsTrigger>
           </TabsList>
 
           {/* ── Vue d'ensemble ─────────────────────────── */}
@@ -125,6 +127,18 @@ export default function DashboardPage() {
           {/* ── Intelligence ───────────────────────────── */}
           <TabsContent value="intelligence">
             <InsightsDashboard />
+          </TabsContent>
+
+          {/* ── Liens trackés ──────────────────────────── */}
+          <TabsContent value="links">
+            <Card>
+              <CardHeader>
+                <CardTitle>Liens trackés</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TrackedLinksWidget />
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
