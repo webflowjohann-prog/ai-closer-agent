@@ -90,6 +90,9 @@ export interface SubAccount {
   // Sprint 3 fields
   last_optimized_at?: string
   optimization_score?: number
+  // Switchy fields
+  switchy_api_key_encrypted?: string
+  switchy_custom_domain?: string
   created_at: string
   updated_at: string
   deleted_at?: string
@@ -562,6 +565,42 @@ export interface FormConnection {
   leads_received: number
   leads_contacted: number
   is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+// === SWITCHY TYPES ===
+
+export type RetargetingPlatform = 'facebook' | 'google_ads' | 'tiktok' | 'linkedin' | 'twitter' | 'pinterest' | 'snapchat' | 'custom'
+
+export interface RetargetingPixel {
+  id: string
+  sub_account_id: string
+  platform: RetargetingPlatform
+  pixel_id: string
+  label?: string
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface TrackedLink {
+  id: string
+  sub_account_id: string
+  original_url: string
+  switchy_url: string
+  custom_domain?: string
+  title?: string
+  description?: string
+  image_url?: string
+  deep_linking: boolean
+  pixels_applied: string[]
+  utm_campaign?: string
+  utm_source?: string
+  utm_medium?: string
+  clicks: number
+  conversation_id?: string
+  contact_id?: string
   created_at: string
   updated_at: string
 }

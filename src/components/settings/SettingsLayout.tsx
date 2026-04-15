@@ -2,7 +2,7 @@ import { useState } from 'react'
 import {
   Building2, MessageSquare, Bot, Key, Users, CreditCard,
   Palette, Code2, BarChart3, Star, CreditCard as StripeIcon,
-  GitBranch, Video,
+  GitBranch, Video, Target, Link2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ProfileSettings } from './ProfileSettings'
@@ -18,6 +18,8 @@ import { ReviewSettings } from './ReviewSettings'
 import { StripeSettings } from './StripeSettings'
 import { RoutingRules } from './RoutingRules'
 import { VideoAISettings } from './VideoAISettings'
+import { PixelSettings } from './PixelSettings'
+import { SwitchySettings } from './SwitchySettings'
 import { Separator } from '@/components/ui/separator'
 
 const sections = [
@@ -25,6 +27,8 @@ const sections = [
   { id: 'channels', label: 'Canaux', icon: MessageSquare },
   { id: 'bot', label: 'Instructions bot', icon: Bot },
   { id: 'apikey', label: 'Clé API (BYOK)', icon: Key },
+  { id: 'pixels', label: 'Pixels', icon: Target },
+  { id: 'switchy', label: 'Liens trackés', icon: Link2 },
   { id: 'whitelabel', label: 'White-Label', icon: Palette },
   { id: 'api', label: 'API & Webhooks', icon: Code2 },
   { id: 'reports', label: 'Rapports', icon: BarChart3 },
@@ -76,6 +80,8 @@ export function SettingsLayout() {
           </div>
         )}
         {active === 'apikey' && <ApiKeySettings />}
+        {active === 'pixels' && <PixelSettings />}
+        {active === 'switchy' && <SwitchySettings />}
         {active === 'whitelabel' && <WhiteLabelSettings />}
         {active === 'api' && <ApiAccessSettings />}
         {active === 'reports' && <ReportSettings />}

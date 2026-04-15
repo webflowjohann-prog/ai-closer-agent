@@ -3,6 +3,7 @@ import type { SubAccount, FAQ, Message } from '@/types/database'
 import { buildSystemPrompt } from './prompts'
 import { formatAsSMS, splitIntoChunks } from './humanize'
 import type { LLMProvider } from './providers'
+import { wrapBotLink } from '@/lib/switchy'
 
 interface AgentResponse {
   chunks: string[]
@@ -18,6 +19,9 @@ interface AgentOptions {
   userMessage: string
   provider?: LLMProvider
   model?: string
+  conversationId?: string
+  contactId?: string
+  channel?: string
 }
 
 // ─── Provider implementations ────────────────────────────────────────────────
@@ -118,6 +122,37 @@ async function runMistral(
 
 // ─── Orchestrator ─────────────────────────────────────────────────────────────
 
+// Regex to detect URLs in text
+const URL_REGEX = /https?:\/\/[^\s"'<>)]+/g
+
+async function wrapLinksInText(
+  text: string,
+  subAccount: SubAccount,
+  context: { conversationId?: string; contactId?: string; channel?: string }
+): Promise<string> {
+  if (!subAccount.switchy_api_key_encrypted) return text
+
+  const urls = text.match(URL_REGEX)
+  if (!urls || urls.length === 0) return text
+
+  // Deduplicate
+  const unique = [...new Set(urls)]
+  let result = text
+
+  for (const url of unique) {
+    try {
+      const wrapped = await wrapBotLink(url, subAccount, context)
+      if (wrapped !== url) {
+        result = result.split(url).join(wrapped)
+      }
+    } catch {
+      // Fall through — keep original URL
+    }
+  }
+
+  return result
+}
+
 export async function runAgent(options: AgentOptions): Promise<AgentResponse> {
   const {
     apiKey,
@@ -127,6 +162,9 @@ export async function runAgent(options: AgentOptions): Promise<AgentResponse> {
     userMessage,
     provider = 'anthropic',
     model,
+    conversationId,
+    contactId,
+    channel,
   } = options
 
   const systemPrompt = buildSystemPrompt({
@@ -174,7 +212,14 @@ export async function runAgent(options: AgentOptions): Promise<AgentResponse> {
       break
   }
 
-  const formattedText = formatAsSMS(rawText)
+  // Wrap any URLs in the response with Switchy tracked links
+  const wrappedText = await wrapLinksInText(rawText, subAccount, {
+    conversationId,
+    contactId,
+    channel,
+  })
+
+  const formattedText = formatAsSMS(wrappedText)
   const chunks = splitIntoChunks(formattedText, subAccount.max_message_chunks)
 
   // Detect booking intent

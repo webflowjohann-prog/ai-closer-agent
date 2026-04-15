@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { QRCodeList } from '@/components/growth/QRCodeList'
 import { FormConnectionList } from '@/components/growth/FormConnectionList'
 import { SocialProofSettings } from '@/components/growth/SocialProofSettings'
+import { TrackedLinksWidget } from '@/components/dashboard/TrackedLinksWidget'
 
 export default function GrowthPage() {
   return (
@@ -25,6 +26,7 @@ export default function GrowthPage() {
             <TabsTrigger value="qr">QR Codes</TabsTrigger>
             <TabsTrigger value="forms">Formulaires</TabsTrigger>
             <TabsTrigger value="proof">Social Proof</TabsTrigger>
+            <TabsTrigger value="links">Liens trackés</TabsTrigger>
           </TabsList>
 
           <TabsContent value="qr">
@@ -37,6 +39,10 @@ export default function GrowthPage() {
 
           <TabsContent value="proof">
             <SocialProofSettings />
+          </TabsContent>
+
+          <TabsContent value="links">
+            <TrackedLinksWidget />
           </TabsContent>
         </Tabs>
       </div>
