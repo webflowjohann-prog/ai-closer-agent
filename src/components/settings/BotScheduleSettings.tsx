@@ -78,7 +78,7 @@ export function BotScheduleSettings() {
   const activeDays = schedule.filter((d) => d.is_active).length
 
   const handleSave = async () => {
-    if (!activeSubAccount) return
+    if (!activeSubAccount) { toast.error("Aucun compte actif", { description: "Rechargez la page ou reconnectez-vous." }); return }
     setSaving(true)
 
     try {
@@ -109,8 +109,9 @@ export function BotScheduleSettings() {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erreur inconnue'
       toast.error('Erreur', { description: message })
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
   }
 
   return (
@@ -169,7 +170,7 @@ export function BotScheduleSettings() {
         </p>
       </div>
 
-      <Button onClick={handleSave} disabled={saving} className="w-full">
+      <Button type="button" onClick={handleSave} disabled={saving} className="w-full">
         {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
         {saving ? 'Sauvegarde...' : 'Enregistrer les horaires'}
       </Button>

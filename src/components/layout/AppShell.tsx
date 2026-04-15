@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
 import { MobileNav } from './MobileNav'
+import { useOrgInit } from '@/hooks/useOrgInit'
 
 const pageVariants = {
   initial: { opacity: 0, y: 8 },
@@ -20,6 +21,7 @@ const pageVariants = {
 }
 
 export function AppShell() {
+  useOrgInit()
   const location = useLocation()
 
   return (

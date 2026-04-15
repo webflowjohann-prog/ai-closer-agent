@@ -5,8 +5,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
+import { useOrgStore } from '@/stores/orgStore'
 
 export function VideoAISettings() {
+  const { activeSubAccount } = useOrgStore()
   const [elevenLabsKey, setElevenLabsKey] = useState('')
   const [klingKey, setKlingKey] = useState('')
   const [showKeys, setShowKeys] = useState(false)
@@ -14,10 +17,26 @@ export function VideoAISettings() {
   const [defaultStyle, setDefaultStyle] = useState('pro')
   const [saved, setSaved] = useState(false)
 
-  const handleSave = () => {
-    setSaved(true)
-    toast.success('Configuration vidéo enregistrée')
-    setTimeout(() => setSaved(false), 3000)
+  const handleSave = async () => {
+    if (!activeSubAccount) { toast.error('Aucun compte actif', { description: 'Rechargez la page ou reconnectez-vous.' }); return }
+    try {
+      const existingConfig = (activeSubAccount as any).config || {}
+      const { error } = await supabase.from('sub_accounts').update({
+        config: {
+          ...existingConfig,
+          ...(elevenLabsKey && { elevenlabs_key: elevenLabsKey }),
+          ...(klingKey && { kling_key: klingKey }),
+          video_default_voice: defaultVoice,
+          video_default_style: defaultStyle,
+        },
+      }).eq('id', activeSubAccount.id)
+      if (error) { toast.error('Erreur', { description: error.message }); return }
+      setSaved(true)
+      toast.success('Configuration vidéo enregistrée')
+      setTimeout(() => setSaved(false), 3000)
+    } catch (e: any) {
+      toast.error('Erreur inattendue', { description: e?.message ?? 'Vérifiez votre connexion.' })
+    }
   }
 
   return (
@@ -108,7 +127,7 @@ export function VideoAISettings() {
           </div>
         </div>
 
-        <Button onClick={handleSave}>
+        <Button type="button" onClick={handleSave}>
           {saved ? <><Check className="w-3.5 h-3.5" /> Enregistré</> : 'Enregistrer'}
         </Button>
       </div>

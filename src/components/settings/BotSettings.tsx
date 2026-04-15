@@ -19,29 +19,32 @@ export function BotSettings() {
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
-    if (!activeSubAccount) return
+    if (!activeSubAccount) { toast.error("Aucun compte actif", { description: "Rechargez la page ou reconnectez-vous." }); return }
     setSaving(true)
-
-    const { data, error } = await supabase
-      .from('sub_accounts')
-      .update({
+    try {
+      const updates = {
         bot_instructions: instructions,
         bot_personality: personality,
         response_delay_min: delayMin[0],
         response_delay_max: delayMax[0],
         max_message_chunks: maxChunks[0],
-      })
-      .eq('id', activeSubAccount.id)
-      .select()
-      .single()
+      }
+      const { error } = await supabase
+        .from('sub_accounts')
+        .update(updates)
+        .eq('id', activeSubAccount.id)
 
-    if (error) {
-      toast.error('Erreur de sauvegarde')
-    } else {
-      setActiveSubAccount({ ...activeSubAccount, ...data })
-      toast.success('Configuration sauvegardée')
+      if (error) {
+        toast.error('Erreur de sauvegarde', { description: error.message })
+      } else {
+        setActiveSubAccount({ ...activeSubAccount, ...updates })
+        toast.success('Configuration sauvegardée')
+      }
+    } catch (e: any) {
+      toast.error('Erreur inattendue', { description: e?.message ?? 'Vérifiez votre connexion.' })
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
   }
 
   return (
@@ -117,7 +120,7 @@ Ex: "Tu es l'assistant de [Nom], spécialisé dans [domaine]. Ton rôle est de q
         </div>
       </div>
 
-      <Button onClick={handleSave} disabled={saving} className="w-full">
+      <Button type="button" onClick={handleSave} disabled={saving} className="w-full">
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
         {saving ? 'Sauvegarde...' : 'Enregistrer'}
       </Button>

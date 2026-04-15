@@ -149,7 +149,7 @@ export function ReportSettings() {
             </div>
           </div>
 
-          <Button onClick={handleSave} disabled={upsertSchedule.isPending}>
+          <Button type="button" onClick={handleSave} disabled={upsertSchedule.isPending}>
             {upsertSchedule.isPending ? 'Enregistrement...' : 'Enregistrer'}
           </Button>
         </div>

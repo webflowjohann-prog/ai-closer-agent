@@ -49,6 +49,8 @@ interface SubAccount {
   // Sprint 3
   last_optimized_at?: string
   optimization_score?: number
+  // JSONB config — stores channel-specific settings (stripe, reviews, video, social proof...)
+  config?: Record<string, any>
 }
 
 interface OrgState {

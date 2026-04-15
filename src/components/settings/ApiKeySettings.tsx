@@ -141,25 +141,29 @@ export function ApiKeySettings() {
       updates.default_llm_model = model
     }
 
-    const { error } = await supabase
-      .from('sub_accounts')
-      .update(updates)
-      .eq('id', activeSubAccount.id)
+    try {
+      const { error } = await supabase
+        .from('sub_accounts')
+        .update(updates)
+        .eq('id', activeSubAccount.id)
 
-    update(provider, { saving: false })
-
-    if (error) {
-      toast.error('Erreur de sauvegarde', { description: error.message })
-    } else {
-      toast.success('Clé sauvegardée', {
-        description: `Clé ${PROVIDERS[provider].name} chiffrée et stockée.`,
-      })
+      if (error) {
+        toast.error('Erreur de sauvegarde', { description: error.message })
+      } else {
+        toast.success('Clé sauvegardée', {
+          description: `Clé ${PROVIDERS[provider].name} chiffrée et stockée.`,
+        })
+      }
+    } catch (e: any) {
+      toast.error('Erreur inattendue', { description: e?.message ?? 'Vérifiez votre connexion.' })
+    } finally {
+      update(provider, { saving: false })
     }
   }
 
   const handleSetDefault = async (provider: LLMProvider) => {
     setDefaultProvider(provider)
-    if (!activeSubAccount) return
+    if (!activeSubAccount) { toast.error("Aucun compte actif", { description: "Rechargez la page ou reconnectez-vous." }); return }
     const { error } = await supabase
       .from('sub_accounts')
       .update({

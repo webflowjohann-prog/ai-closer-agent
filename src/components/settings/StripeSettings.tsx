@@ -16,13 +16,15 @@ export function StripeSettings() {
   const [loading, setLoading] = useState(false)
 
   const handleSave = async () => {
-    if (!activeSubAccount) return
+    if (!activeSubAccount) { toast.error("Aucun compte actif", { description: "Rechargez la page ou reconnectez-vous." }); return }
     setLoading(true)
     try {
-      await supabase
+      const existingConfig = (activeSubAccount as any).config || {}
+      const { error } = await supabase
         .from('sub_accounts')
-        .update({ 'config->stripe_secret_key': stripeKey })
+        .update({ config: { ...existingConfig, stripe_secret_key: stripeKey } })
         .eq('id', activeSubAccount.id)
+      if (error) throw error
       setSaved(true)
       toast.success('Clé Stripe enregistrée')
       setTimeout(() => setSaved(false), 3000)

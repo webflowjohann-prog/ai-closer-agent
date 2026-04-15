@@ -19,23 +19,28 @@ export function ProfileSettings() {
   const [saving, setSaving] = useState(false)
 
   const handleSave = async () => {
-    if (!activeSubAccount) return
-    setSaving(true)
-
-    const { data, error } = await supabase
-      .from('sub_accounts')
-      .update({ name, website_url: website, phone, email, address, description })
-      .eq('id', activeSubAccount.id)
-      .select()
-      .single()
-
-    if (error) {
-      toast.error('Erreur de sauvegarde')
-    } else {
-      setActiveSubAccount({ ...activeSubAccount, ...data })
-      toast.success('Profil mis à jour')
+    if (!activeSubAccount) {
+      toast.error('Aucun compte actif', { description: 'Rechargez la page ou reconnectez-vous.' })
+      return
     }
-    setSaving(false)
+    setSaving(true)
+    try {
+      const { error } = await supabase
+        .from('sub_accounts')
+        .update({ name, website_url: website, phone, email, address, description })
+        .eq('id', activeSubAccount.id)
+
+      if (error) {
+        toast.error('Erreur de sauvegarde', { description: error.message })
+      } else {
+        setActiveSubAccount({ ...activeSubAccount, name, website_url: website, phone, email, address, description })
+        toast.success('Profil mis à jour')
+      }
+    } catch (e: any) {
+      toast.error('Erreur inattendue', { description: e?.message ?? 'Vérifiez votre connexion.' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -77,7 +82,7 @@ export function ProfileSettings() {
         />
       </div>
 
-      <Button onClick={handleSave} disabled={saving}>
+      <Button type="button" onClick={handleSave} disabled={saving}>
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
         {saving ? 'Sauvegarde...' : 'Enregistrer'}
       </Button>

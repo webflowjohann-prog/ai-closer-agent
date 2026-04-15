@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Zap } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuthStore } from '@/stores/authStore'
+import { useOrgStore } from '@/stores/orgStore'
 import { StepBusiness, type BusinessData } from './StepBusiness'
 import { StepChannels } from './StepChannels'
 import { StepActivation } from './StepActivation'
@@ -33,6 +34,7 @@ const slideVariants = {
 export function OnboardingShell() {
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { setOrganization, setSubAccounts, setActiveSubAccount } = useOrgStore()
   const [step, setStep] = useState(0)
   const [direction, setDirection] = useState(1)
   const [activating, setActivating] = useState(false)
@@ -122,12 +124,23 @@ export function OnboardingShell() {
         await supabase.from('channels').insert(activeChannels)
       }
 
+      // Populate store immediately so Settings works right away
+      setOrganization(org)
+      setSubAccounts([subAccount])
+      setActiveSubAccount(subAccount)
+
       toast.success('Agent activé !', {
         description: 'Votre assistant IA est prêt à prendre en charge vos prospects.',
       })
       navigate('/app')
     } catch (error: any) {
-      toast.error('Erreur', { description: error.message })
+      const isRLS = error?.message?.includes('row-level security') || error?.code === '42501'
+      toast.error(isRLS ? 'Migration requise' : 'Erreur', {
+        description: isRLS
+          ? 'Exécutez la migration 005_fix_onboarding_rls.sql dans le SQL Editor Supabase, puis réessayez.'
+          : error.message,
+        duration: isRLS ? 10000 : 5000,
+      })
     } finally {
       setActivating(false)
     }

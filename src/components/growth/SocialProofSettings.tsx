@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider'
 import { Separator } from '@/components/ui/separator'
 import { SocialProofPreview } from './SocialProofPreview'
 import { useOrgStore } from '@/stores/orgStore'
+import { supabase } from '@/lib/supabase'
 import { toast } from 'sonner'
 
 type Position = 'bottom-left' | 'bottom-right'
@@ -19,8 +20,32 @@ export function SocialProofSettings() {
   const [interval, setInterval] = useState([8])
   const [position, setPosition] = useState<Position>('bottom-left')
   const [copied, setCopied] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const embedCode = `<script src="https://cdn.ikonik-ac.com/proof.js" data-id="${activeSubAccount?.id || 'YOUR_ID'}"></script>`
+
+  const handleSave = async () => {
+    if (!activeSubAccount) { toast.error('Aucun compte actif', { description: 'Rechargez la page ou reconnectez-vous.' }); return }
+    setSaving(true)
+    try {
+      const existingConfig = (activeSubAccount as any).config || {}
+      const { error } = await supabase.from('sub_accounts').update({
+        config: {
+          ...existingConfig,
+          social_proof_enabled: enabled,
+          social_proof_template: template,
+          social_proof_interval: interval[0],
+          social_proof_position: position,
+        },
+      }).eq('id', activeSubAccount.id)
+      if (error) { toast.error('Erreur', { description: error.message }); return }
+      toast.success('Widget social proof enregistré')
+    } catch (e: any) {
+      toast.error('Erreur inattendue', { description: e?.message ?? 'Vérifiez votre connexion.' })
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const copyEmbed = () => {
     navigator.clipboard.writeText(embedCode)
@@ -86,6 +111,10 @@ export function SocialProofSettings() {
               ))}
             </div>
           </div>
+
+          <Button type="button" onClick={handleSave} disabled={saving} size="sm">
+            {saving ? 'Enregistrement...' : 'Enregistrer'}
+          </Button>
 
           <Separator />
 

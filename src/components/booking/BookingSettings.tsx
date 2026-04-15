@@ -6,14 +6,18 @@ import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
+import { useOrgStore } from '@/stores/orgStore'
 
 export function BookingSettings() {
+  const { activeSubAccount } = useOrgStore()
   const [connected, setConnected] = useState(false)
   const [connecting, setConnecting] = useState(false)
-  const [duration, setDuration] = useState([30])
-  const [buffer, setBuffer] = useState([15])
-  const [calendarLink, setCalendarLink] = useState('')
-  const [useExternal, setUseExternal] = useState(false)
+  const [duration, setDuration] = useState([activeSubAccount?.booking_duration_minutes ?? 30])
+  const [buffer, setBuffer] = useState([activeSubAccount?.booking_buffer_minutes ?? 15])
+  const [calendarLink, setCalendarLink] = useState(activeSubAccount?.booking_link_external || '')
+  const [useExternal, setUseExternal] = useState(!!activeSubAccount?.booking_link_external)
+  const [saving, setSaving] = useState(false)
 
   const handleGoogleConnect = async () => {
     setConnecting(true)
@@ -23,6 +27,24 @@ export function BookingSettings() {
     toast.success('Google Calendar connecté', {
       description: 'Les rendez-vous seront synchronisés automatiquement.',
     })
+  }
+
+  const handleSave = async () => {
+    if (!activeSubAccount) { toast.error('Aucun compte actif', { description: 'Rechargez la page ou reconnectez-vous.' }); return }
+    setSaving(true)
+    try {
+      const { error } = await supabase.from('sub_accounts').update({
+        booking_duration_minutes: duration[0],
+        booking_buffer_minutes: buffer[0],
+        booking_link_external: useExternal ? calendarLink || null : null,
+      }).eq('id', activeSubAccount.id)
+      if (error) { toast.error('Erreur', { description: error.message }); return }
+      toast.success('Paramètres de booking enregistrés')
+    } catch (e: any) {
+      toast.error('Erreur inattendue', { description: e?.message ?? 'Vérifiez votre connexion.' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -123,8 +145,8 @@ export function BookingSettings() {
         )}
       </div>
 
-      <Button className="w-full">
-        Enregistrer
+      <Button type="button" onClick={handleSave} disabled={saving} className="w-full">
+        {saving ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Enregistrement...</> : 'Enregistrer'}
       </Button>
     </div>
   )

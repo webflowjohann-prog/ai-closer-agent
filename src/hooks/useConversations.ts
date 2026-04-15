@@ -51,7 +51,7 @@ export function useConversations() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [activeSubAccount])
+  }, [activeSubAccount?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return { conversations, loading }
 }

@@ -43,6 +43,20 @@ export function useMessages(conversationId: string | null) {
           setMessages((prev) => [...prev, payload.new as Message])
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          setMessages((prev) =>
+            prev.map((m) => (m.id === payload.new.id ? { ...m, ...(payload.new as Message) } : m))
+          )
+        }
+      )
       .subscribe()
 
     return () => {

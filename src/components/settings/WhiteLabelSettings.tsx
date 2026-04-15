@@ -43,7 +43,7 @@ function Section({ icon, title, children }: SectionProps) {
 }
 
 export function WhiteLabelSettings() {
-  const { organization } = useOrgStore()
+  const { organization, setOrganization } = useOrgStore()
   const [saving, setSaving] = useState(false)
 
   const [brandName, setBrandName] = useState(organization?.brand_name || '')
@@ -82,6 +82,22 @@ export function WhiteLabelSettings() {
     if (error) {
       toast.error('Erreur de sauvegarde', { description: error.message })
     } else {
+      if (organization) {
+        setOrganization({
+          ...organization,
+          brand_name: brandName,
+          brand_color: brandColor,
+          custom_domain: customDomain || undefined,
+          font_family: fontFamily,
+          seo_title: seoTitle || undefined,
+          seo_description: seoDescription || undefined,
+          terms_url: termsUrl || undefined,
+          privacy_url: privacyUrl || undefined,
+          ...(logoUrl && { logo_url: logoUrl }),
+          ...(faviconUrl && { favicon_url: faviconUrl }),
+          ...(loginBgUrl && { login_bg_url: loginBgUrl }),
+        })
+      }
       toast.success('White-label mis à jour', {
         description: 'Vos modifications seront visibles au prochain déploiement.',
       })
@@ -247,7 +263,7 @@ export function WhiteLabelSettings() {
 
           {/* Save */}
           <motion.div whileTap={{ scale: 0.98 }}>
-            <Button onClick={handleSave} disabled={saving} className="w-full">
+            <Button type="button" onClick={handleSave} disabled={saving} className="w-full">
               {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               {saving ? 'Sauvegarde...' : 'Enregistrer les modifications'}
             </Button>

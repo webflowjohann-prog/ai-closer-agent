@@ -19,7 +19,7 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
       toast.error('Erreur de connexion', { description: error.message })
@@ -27,7 +27,14 @@ export default function LoginPage() {
       return
     }
 
-    navigate('/app')
+    // Check if onboarding was completed (users record exists)
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('organization_id')
+      .eq('id', authData.user?.id ?? '')
+      .maybeSingle()
+
+    navigate(userRecord?.organization_id ? '/app' : '/onboarding')
   }
 
   return (

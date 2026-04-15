@@ -112,6 +112,7 @@ export function ChatWindow({ conversation, onBotToggle }: ChatWindowProps) {
         onSend={handleSend}
         onToggleBot={onBotToggle}
         botActive={conversation.status === 'bot_active'}
+        conversation={conversation}
       />
     </div>
   )

@@ -3,6 +3,7 @@ import { LayoutDashboard, MessageSquare, Calendar, LogOut, Zap } from 'lucide-re
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/stores/authStore'
 import { useOrgStore } from '@/stores/orgStore'
+import { useOrgInit } from '@/hooks/useOrgInit'
 import { supabase } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 
@@ -13,6 +14,7 @@ const portalNav = [
 ]
 
 export function ClientPortalShell() {
+  useOrgInit()
   const { user } = useAuthStore()
   const { organization, activeSubAccount } = useOrgStore()
   const navigate = useNavigate()

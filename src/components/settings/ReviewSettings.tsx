@@ -21,15 +21,20 @@ export function ReviewSettings() {
   const [saved, setSaved] = useState(false)
 
   const handleSave = async () => {
-    if (!activeSubAccount) return
+    if (!activeSubAccount) { toast.error("Aucun compte actif", { description: "Rechargez la page ou reconnectez-vous." }); return }
     try {
-      await supabase.from('sub_accounts').update({
-        'config->review_google_url': googleUrl,
-        'config->review_trustpilot_url': trustpilotUrl,
-        'config->review_message': message,
-        'config->review_auto_send': autoSend,
-        'config->review_delay_days': parseInt(delayDays),
+      const existingConfig = (activeSubAccount as any).config || {}
+      const { error } = await supabase.from('sub_accounts').update({
+        config: {
+          ...existingConfig,
+          review_google_url: googleUrl,
+          review_trustpilot_url: trustpilotUrl,
+          review_message: message,
+          review_auto_send: autoSend,
+          review_delay_days: parseInt(delayDays),
+        },
       }).eq('id', activeSubAccount.id)
+      if (error) throw error
       setSaved(true)
       toast.success('Configuration enregistrée')
       setTimeout(() => setSaved(false), 3000)
@@ -105,7 +110,7 @@ export function ReviewSettings() {
           </div>
         )}
 
-        <Button onClick={handleSave}>
+        <Button type="button" onClick={handleSave}>
           {saved ? <><Check className="w-3.5 h-3.5" /> Enregistré</> : 'Enregistrer'}
         </Button>
       </div>
