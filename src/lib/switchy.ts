@@ -169,7 +169,7 @@ export async function wrapBotLink(
     channel?: string
   }
 ): Promise<string> {
-  const apiKey = subAccount.switchy_api_key_encrypted
+  const apiKey = import.meta.env.VITE_SWITCHY_API_KEY as string | undefined
   if (!apiKey) return originalUrl
 
   try {

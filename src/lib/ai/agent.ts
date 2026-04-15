@@ -130,7 +130,7 @@ async function wrapLinksInText(
   subAccount: SubAccount,
   context: { conversationId?: string; contactId?: string; channel?: string }
 ): Promise<string> {
-  if (!subAccount.switchy_api_key_encrypted) return text
+  if (!import.meta.env.VITE_SWITCHY_API_KEY) return text
 
   const urls = text.match(URL_REGEX)
   if (!urls || urls.length === 0) return text

@@ -91,7 +91,6 @@ export interface SubAccount {
   last_optimized_at?: string
   optimization_score?: number
   // Switchy fields
-  switchy_api_key_encrypted?: string
   switchy_custom_domain?: string
   created_at: string
   updated_at: string

@@ -52,7 +52,6 @@ interface SubAccount {
   // JSONB config — stores channel-specific settings (stripe, reviews, video, social proof...)
   config?: Record<string, any>
   // Switchy
-  switchy_api_key_encrypted?: string
   switchy_custom_domain?: string
 }
 
