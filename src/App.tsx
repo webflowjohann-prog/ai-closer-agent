@@ -19,6 +19,10 @@ const ContactsPage = lazy(() => import('@/pages/ContactsPage'))
 const BookingPage = lazy(() => import('@/pages/BookingPage'))
 const PlaygroundPage = lazy(() => import('@/pages/PlaygroundPage'))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
+const DealsPage = lazy(() => import('@/pages/DealsPage'))
+const CampaignsPage = lazy(() => import('@/pages/CampaignsPage'))
+const CampaignDetailPage = lazy(() => import('@/pages/CampaignDetailPage'))
+const TemplatesPage = lazy(() => import('@/pages/TemplatesPage'))
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user, loading, initialized } = useAuthStore()
@@ -89,6 +93,10 @@ export default function App() {
               <Route path="booking" element={<BookingPage />} />
               <Route path="playground" element={<PlaygroundPage />} />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="deals" element={<DealsPage />} />
+              <Route path="campaigns" element={<CampaignsPage />} />
+              <Route path="campaigns/:id" element={<CampaignDetailPage />} />
+              <Route path="templates" element={<TemplatesPage />} />
             </Route>
 
             {/* Default redirect */}

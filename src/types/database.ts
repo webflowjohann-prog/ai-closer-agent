@@ -228,3 +228,139 @@ export interface ObjectionHandler {
   objection: string
   response: string
 }
+
+// === SPRINT 2 TYPES ===
+
+export type DealStage = 'lead' | 'qualified' | 'meeting' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost'
+export type CampaignType = 'outbound' | 'incoming' | 'comment_to_dm'
+export type CampaignStatus = 'draft' | 'active' | 'paused' | 'completed' | 'archived'
+export type CampaignContactStatus = 'pending' | 'in_progress' | 'completed' | 'replied' | 'booked' | 'opted_out' | 'failed'
+export type FollowUpStatus = 'scheduled' | 'sent' | 'cancelled' | 'failed'
+
+export interface Deal {
+  id: string
+  sub_account_id: string
+  contact_id: string
+  conversation_id?: string
+  title: string
+  stage: DealStage
+  value?: number
+  currency: string
+  probability: number
+  expected_close_date?: string
+  assigned_user_id?: string
+  notes?: string
+  tags: string[]
+  sort_order: number
+  stage_changed_at: string
+  won_at?: string
+  lost_at?: string
+  lost_reason?: string
+  created_at: string
+  updated_at: string
+  deleted_at?: string
+  // Joined
+  contact?: Contact
+}
+
+export interface Campaign {
+  id: string
+  sub_account_id: string
+  name: string
+  description?: string
+  type: CampaignType
+  status: CampaignStatus
+  channel_type: ChannelType
+  total_contacts: number
+  sent_count: number
+  delivered_count: number
+  read_count: number
+  replied_count: number
+  booked_count: number
+  daily_send_limit: number
+  send_window_start: string
+  send_window_end: string
+  timezone: string
+  tags: string[]
+  started_at?: string
+  completed_at?: string
+  created_at: string
+  updated_at: string
+  // Joined
+  sequences?: CampaignSequence[]
+}
+
+export interface CampaignSequence {
+  id: string
+  campaign_id: string
+  step_number: number
+  name?: string
+  template_a: string
+  template_b?: string
+  delay_hours: number
+  send_if_no_reply: boolean
+  stop_if_replied: boolean
+  stop_if_booked: boolean
+  sent_count: number
+  delivered_count: number
+  replied_count: number
+  sent_a: number
+  sent_b: number
+  replied_a: number
+  replied_b: number
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export interface CampaignContact {
+  id: string
+  campaign_id: string
+  contact_id: string
+  status: CampaignContactStatus
+  current_step: number
+  last_sent_at?: string
+  next_send_at?: string
+  replied_at?: string
+  booked_at?: string
+  ab_variant: 'a' | 'b'
+  metadata: Record<string, unknown>
+  created_at: string
+  updated_at: string
+  // Joined
+  contact?: Contact
+}
+
+export interface FollowUp {
+  id: string
+  sub_account_id: string
+  contact_id: string
+  conversation_id?: string
+  message: string
+  channel_type: ChannelType
+  scheduled_at: string
+  status: FollowUpStatus
+  cancel_if_replied: boolean
+  cancel_if_booked: boolean
+  sent_at?: string
+  created_at: string
+  updated_at: string
+  // Joined
+  contact?: Contact
+}
+
+export interface MessageTemplate {
+  id: string
+  sub_account_id: string
+  name: string
+  category: string
+  content: string
+  variables: string[]
+  channel_type?: ChannelType
+  times_used: number
+  last_used_at?: string
+  is_active: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}

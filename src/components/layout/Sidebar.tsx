@@ -10,6 +10,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Zap,
+  TrendingUp,
+  Megaphone,
+  FileText,
 } from 'lucide-react'
 import { useUIStore } from '@/stores/uiStore'
 import { useOrgStore } from '@/stores/orgStore'
@@ -20,6 +23,9 @@ const navItems = [
   { to: '/app', icon: LayoutDashboard, label: 'Dashboard', exact: true },
   { to: '/app/inbox', icon: MessageSquare, label: 'Inbox' },
   { to: '/app/contacts', icon: Users, label: 'Contacts' },
+  { to: '/app/deals', icon: TrendingUp, label: 'Deals' },
+  { to: '/app/campaigns', icon: Megaphone, label: 'Campagnes' },
+  { to: '/app/templates', icon: FileText, label: 'Templates' },
   { to: '/app/booking', icon: Calendar, label: 'Booking' },
   { to: '/app/playground', icon: FlaskConical, label: 'Playground' },
   { to: '/app/settings', icon: Settings, label: 'Réglages' },
