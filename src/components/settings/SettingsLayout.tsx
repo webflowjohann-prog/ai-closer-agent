@@ -1,16 +1,23 @@
 import { useState } from 'react'
-import { Building2, MessageSquare, Bot, Key, Users, CreditCard } from 'lucide-react'
+import { Building2, MessageSquare, Bot, Key, Users, CreditCard, Palette, Code2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ProfileSettings } from './ProfileSettings'
 import { ChannelSettings } from './ChannelSettings'
 import { BotSettings } from './BotSettings'
 import { ApiKeySettings } from './ApiKeySettings'
+import { WhiteLabelSettings } from './WhiteLabelSettings'
+import { ApiAccessSettings } from './ApiAccessSettings'
+import { BotScheduleSettings } from './BotScheduleSettings'
+import { OptimizeBot } from './OptimizeBot'
+import { Separator } from '@/components/ui/separator'
 
 const sections = [
   { id: 'profile', label: 'Profil entreprise', icon: Building2 },
   { id: 'channels', label: 'Canaux', icon: MessageSquare },
   { id: 'bot', label: 'Instructions bot', icon: Bot },
   { id: 'apikey', label: 'Clé API (BYOK)', icon: Key },
+  { id: 'whitelabel', label: 'White-Label', icon: Palette },
+  { id: 'api', label: 'API & Webhooks', icon: Code2 },
   { id: 'team', label: 'Équipe', icon: Users },
   { id: 'billing', label: 'Facturation', icon: CreditCard },
 ]
@@ -45,8 +52,18 @@ export function SettingsLayout() {
       <div className="flex-1 overflow-y-auto p-6">
         {active === 'profile' && <ProfileSettings />}
         {active === 'channels' && <ChannelSettings />}
-        {active === 'bot' && <BotSettings />}
+        {active === 'bot' && (
+          <div className="space-y-8">
+            <BotSettings />
+            <Separator />
+            <BotScheduleSettings />
+            <Separator />
+            <OptimizeBot />
+          </div>
+        )}
         {active === 'apikey' && <ApiKeySettings />}
+        {active === 'whitelabel' && <WhiteLabelSettings />}
+        {active === 'api' && <ApiAccessSettings />}
         {active === 'team' && (
           <div className="text-center py-12 text-[var(--text-tertiary)]">
             <Users className="w-8 h-8 mx-auto mb-3" />

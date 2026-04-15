@@ -9,6 +9,16 @@ interface Organization {
   logo_url?: string
   brand_color?: string
   brand_name?: string
+  custom_domain?: string
+  // Sprint 3 white-label
+  font_family?: string
+  seo_title?: string
+  seo_description?: string
+  terms_url?: string
+  privacy_url?: string
+  favicon_url?: string
+  login_bg_url?: string
+  accent_color?: string
 }
 
 interface SubAccount {
@@ -36,6 +46,9 @@ interface SubAccount {
   booking_link_external?: string
   chat_memory_tokens?: number
   claude_api_key_encrypted?: string
+  // Sprint 3
+  last_optimized_at?: string
+  optimization_score?: number
 }
 
 interface OrgState {

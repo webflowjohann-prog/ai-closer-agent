@@ -27,6 +27,15 @@ export interface Organization {
   claude_api_key_encrypted?: string
   gemini_api_key_encrypted?: string
   max_sub_accounts: number
+  // Sprint 3 white-label fields
+  seo_title?: string
+  seo_description?: string
+  terms_url?: string
+  privacy_url?: string
+  favicon_url?: string
+  login_bg_url?: string
+  accent_color?: string
+  font_family?: string
   created_at: string
   updated_at: string
   deleted_at?: string
@@ -72,6 +81,15 @@ export interface SubAccount {
   bot_message_limit?: number
   chat_memory_tokens: number
   claude_api_key_encrypted?: string
+  // Sprint 2 LLM fields
+  default_llm_provider?: string
+  default_llm_model?: string
+  openai_api_key_encrypted?: string
+  gemini_api_key_encrypted?: string
+  mistral_api_key_encrypted?: string
+  // Sprint 3 fields
+  last_optimized_at?: string
+  optimization_score?: number
   created_at: string
   updated_at: string
   deleted_at?: string
@@ -361,6 +379,62 @@ export interface MessageTemplate {
   last_used_at?: string
   is_active: boolean
   sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+// === SPRINT 3 TYPES ===
+
+export type WebhookEvent = 'message.received' | 'message.sent' | 'conversation.created' | 'conversation.closed' | 'contact.created' | 'contact.updated' | 'booking.created' | 'booking.cancelled' | 'deal.stage_changed' | 'deal.won' | 'deal.lost'
+
+export interface ApiKey {
+  id: string
+  organization_id: string
+  name: string
+  key_hash: string
+  key_prefix: string
+  permissions: string[]
+  last_used_at?: string
+  expires_at?: string
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface Webhook {
+  id: string
+  organization_id: string
+  url: string
+  events: WebhookEvent[]
+  secret: string
+  is_active: boolean
+  total_sent: number
+  total_failed: number
+  last_sent_at?: string
+  last_error?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface WebhookLog {
+  id: string
+  webhook_id: string
+  event: WebhookEvent
+  payload: Record<string, unknown>
+  response_status?: number
+  response_body?: string
+  duration_ms?: number
+  success: boolean
+  created_at: string
+}
+
+export interface BotSchedule {
+  id: string
+  sub_account_id: string
+  day_of_week: number
+  start_time: string
+  end_time: string
+  is_active: boolean
   created_at: string
   updated_at: string
 }
